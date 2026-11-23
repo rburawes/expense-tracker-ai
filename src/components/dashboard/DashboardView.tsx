@@ -5,11 +5,14 @@ import { useExpenseDialog } from '@/components/providers/ExpenseDialogProvider';
 import { useExpenses } from '@/components/providers/ExpenseProvider';
 import { useToast } from '@/components/providers/ToastProvider';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { PlusIcon, SparkleIcon, TrendIcon } from '@/components/ui/Icons';
+import { DownloadIcon, PlusIcon, SparkleIcon, TrendIcon } from '@/components/ui/Icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { DashboardSkeleton } from '@/components/ui/Skeleton';
 import { StorageErrorBanner } from '@/components/ui/StorageErrorBanner';
 import { getSummary, monthlyTotals } from '@/lib/analytics';
+import { downloadCsv, expensesToBasicCsv } from '@/lib/csv';
+import { sortExpenses } from '@/lib/filters';
+import { todayISO } from '@/lib/format';
 import { CategoryBreakdown } from './CategoryBreakdown';
 import { MonthlyTrendChart } from './MonthlyTrendChart';
 import { RecentExpenses } from './RecentExpenses';
@@ -39,10 +42,22 @@ export function DashboardView() {
     }
   }
 
+  function exportData() {
+    downloadCsv(expensesToBasicCsv(sortExpenses(expenses, 'date-desc')), `expenses-${todayISO()}.csv`);
+  }
+
   const header = (
     <PageHeader
       title="Dashboard"
       description={isLoaded ? `${greeting()} — here's where your money is going.` : 'Your spending at a glance.'}
+      actions={
+        isLoaded && expenses.length > 0 ? (
+          <button type="button" className="btn btn-secondary" onClick={exportData}>
+            <DownloadIcon size={18} />
+            Export Data
+          </button>
+        ) : undefined
+      }
     />
   );
 
