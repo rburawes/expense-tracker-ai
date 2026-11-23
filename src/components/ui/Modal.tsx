@@ -9,13 +9,17 @@ interface ModalProps {
   title: string;
   description?: string;
   children: ReactNode;
-  size?: 'sm' | 'md';
+  /** Pinned below the scrollable body (e.g. action buttons). */
+  footer?: ReactNode;
+  size?: 'sm' | 'md' | 'lg';
 }
+
+const SIZE_CLASSES = { sm: 'sm:max-w-md', md: 'sm:max-w-lg', lg: 'sm:max-w-3xl' } as const;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Modal({ open, onClose, title, description, children, size = 'md' }: ModalProps) {
+export function Modal({ open, onClose, title, description, children, footer, size = 'md' }: ModalProps) {
   const titleId = useId();
   const descId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -78,9 +82,7 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={description ? descId : undefined}
-        className={`relative flex max-h-[92vh] w-full animate-sheet-in flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-2xl ${
-          size === 'sm' ? 'sm:max-w-md' : 'sm:max-w-lg'
-        }`}
+        className={`relative flex max-h-[92vh] w-full animate-sheet-in flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-2xl ${SIZE_CLASSES[size]}`}
       >
         <div className="mx-auto mt-2.5 h-1.5 w-10 rounded-full bg-slate-200 sm:hidden" aria-hidden="true" />
         <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-4 sm:px-6 sm:pt-6">
@@ -98,7 +100,8 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
             <XIcon size={18} />
           </button>
         </div>
-        <div className="overflow-y-auto px-5 pb-5 pt-2 sm:px-6 sm:pb-6">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-5 pt-2 sm:px-6 sm:pb-6">{children}</div>
+        {footer && <div className="border-t border-slate-200 bg-slate-50/80 px-5 py-3.5 sm:px-6">{footer}</div>}
       </div>
     </div>
   );

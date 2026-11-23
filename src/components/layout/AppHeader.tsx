@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { SyncStatusPill } from '@/components/cloud/SyncStatusPill';
 import { useExpenseDialog } from '@/components/providers/ExpenseDialogProvider';
 import { PlusIcon, SettingsIcon, WalletIcon } from '@/components/ui/Icons';
 import { NAV_ITEMS, isActive } from './navItems';
@@ -44,6 +45,10 @@ export function AppHeader() {
           Add expense
           <kbd className="ml-1 rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-medium">N</kbd>
         </button>
+
+        <div className="ml-auto md:hidden">
+          <SyncStatusPill compact />
+        </div>
 
         <Link
           href="/settings"

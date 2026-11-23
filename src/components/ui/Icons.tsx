@@ -93,3 +93,30 @@ export const DatabaseIcon = createIcon(
   ],
   'DatabaseIcon',
 );
+export const CloudIcon = createIcon('M7 18a4.5 4.5 0 0 1-.9-8.9A6 6 0 0 1 17.7 8 4.5 4.5 0 0 1 17 18H7Z', 'CloudIcon');
+export const CloudCheckIcon = createIcon(
+  ['M7 18a4.5 4.5 0 0 1-.9-8.9A6 6 0 0 1 17.7 8 4.5 4.5 0 0 1 17 18H7Z', 'm9.5 13 2 2 3.5-3.5'],
+  'CloudCheckIcon',
+);
+export const MailIcon = createIcon(['M3.5 6.5h17v11h-17z', 'm4 7 8 6 8-6'], 'MailIcon');
+export const LinkIcon = createIcon(
+  'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  'LinkIcon',
+);
+export const ClockIcon = createIcon(['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', 'M12 7v5l3 2'], 'ClockIcon');
+export const RefreshIcon = createIcon(
+  ['M20 11a8 8 0 0 0-14.7-4.3L4 8.5', 'M4 4v4.5h4.5', 'M4 13a8 8 0 0 0 14.7 4.3L20 15.5', 'M20 20v-4.5h-4.5'],
+  'RefreshIcon',
+);
+export const QrIcon = createIcon(
+  ['M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z', 'M14 14h2v2h-2zM18 14h2M14 18h2M18 18h2v2M16 16h2v2'],
+  'QrIcon',
+);
+export const CopyIcon = createIcon(['M8 8h11v12H8z', 'M5 16V4h11'], 'CopyIcon');
+export const CheckIcon = createIcon('m5 12.5 4.5 4.5L19 7.5', 'CheckIcon');
+export const ExternalIcon = createIcon(['M14 4h6v6', 'M20 4 11 13', 'M18 14v6H4V6h6'], 'ExternalIcon');
+export const ChevronLeftIcon = createIcon('m15 6-6 6 6 6', 'ChevronLeftIcon');
+export const ZapIcon = createIcon('M13 3 5 13.5h6L10 21l8-10.5h-6L13 3Z', 'ZapIcon');
+export const PauseIcon = createIcon('M8 5v14M16 5v14', 'PauseIcon');
+export const PlayIcon = createIcon('M7 5v14l12-7L7 5Z', 'PlayIcon');
+export const ShieldIcon = createIcon(['M12 3 4.5 6v5.5c0 4.5 3.2 8.2 7.5 9.5 4.3-1.3 7.5-5 7.5-9.5V6L12 3Z', 'm9 12 2 2 4-4'], 'ShieldIcon');

@@ -1,6 +1,6 @@
 import type { Expense } from './types';
 
-function escapeCell(value: string): string {
+export function escapeCell(value: string): string {
   // Neutralise spreadsheet formula injection.
   let safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
   if (/[",\r\n]/.test(safe)) safe = `"${safe.replace(/"/g, '""')}"`;

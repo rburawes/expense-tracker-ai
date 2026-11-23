@@ -1,8 +1,9 @@
-import { DashboardIcon, ListIcon, SettingsIcon } from '@/components/ui/Icons';
+import { CloudIcon, DashboardIcon, ListIcon, SettingsIcon } from '@/components/ui/Icons';
 
 export const NAV_ITEMS = [
   { href: '/', label: 'Dashboard', icon: DashboardIcon },
   { href: '/expenses', label: 'Expenses', icon: ListIcon },
+  { href: '/export', label: 'Export & Sync', icon: CloudIcon },
   { href: '/settings', label: 'Settings', icon: SettingsIcon },
 ] as const;
 

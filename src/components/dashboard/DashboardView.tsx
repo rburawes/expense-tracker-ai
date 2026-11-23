@@ -1,11 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo } from 'react';
 import { useExpenseDialog } from '@/components/providers/ExpenseDialogProvider';
 import { useExpenses } from '@/components/providers/ExpenseProvider';
 import { useToast } from '@/components/providers/ToastProvider';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { PlusIcon, SparkleIcon, TrendIcon } from '@/components/ui/Icons';
+import { CloudIcon, PlusIcon, SparkleIcon, TrendIcon } from '@/components/ui/Icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { DashboardSkeleton } from '@/components/ui/Skeleton';
 import { StorageErrorBanner } from '@/components/ui/StorageErrorBanner';
@@ -43,6 +44,14 @@ export function DashboardView() {
     <PageHeader
       title="Dashboard"
       description={isLoaded ? `${greeting()} — here's where your money is going.` : 'Your spending at a glance.'}
+      actions={
+        isLoaded && expenses.length > 0 ? (
+          <Link href="/export" className="btn btn-secondary">
+            <CloudIcon size={18} />
+            Export &amp; share
+          </Link>
+        ) : undefined
+      }
     />
   );
 
