@@ -3,9 +3,10 @@
 import { useMemo } from 'react';
 import { useExpenseDialog } from '@/components/providers/ExpenseDialogProvider';
 import { useExpenses } from '@/components/providers/ExpenseProvider';
+import { useExportDialog } from '@/components/providers/ExportDialogProvider';
 import { useToast } from '@/components/providers/ToastProvider';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { PlusIcon, SparkleIcon, TrendIcon } from '@/components/ui/Icons';
+import { DownloadIcon, PlusIcon, SparkleIcon, TrendIcon } from '@/components/ui/Icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { DashboardSkeleton } from '@/components/ui/Skeleton';
 import { StorageErrorBanner } from '@/components/ui/StorageErrorBanner';
@@ -26,6 +27,7 @@ export function DashboardView() {
   const { expenses, isLoaded, currency, addSampleData } = useExpenses();
   const { openCreate } = useExpenseDialog();
   const { toast } = useToast();
+  const { openExport, canExport } = useExportDialog();
 
   const summary = useMemo(() => getSummary(expenses), [expenses]);
   const monthly = useMemo(() => monthlyTotals(expenses, 6), [expenses]);
@@ -43,6 +45,24 @@ export function DashboardView() {
     <PageHeader
       title="Dashboard"
       description={isLoaded ? `${greeting()} — here's where your money is going.` : 'Your spending at a glance.'}
+      actions={
+        canExport ? (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={openExport}
+            aria-haspopup="dialog"
+            aria-keyshortcuts="E"
+            title="Export data (E)"
+          >
+            <DownloadIcon size={18} />
+            Export
+            <kbd className="ml-0.5 hidden rounded border border-slate-200 bg-slate-50 px-1.5 text-[10px] font-medium text-slate-400 sm:inline">
+              E
+            </kbd>
+          </button>
+        ) : undefined
+      }
     />
   );
 
