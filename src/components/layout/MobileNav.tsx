@@ -4,25 +4,27 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useExpenseDialog } from '@/components/providers/ExpenseDialogProvider';
 import { PlusIcon } from '@/components/ui/Icons';
-import { NAV_ITEMS, isActive } from './navItems';
+import { MOBILE_NAV_LEFT, MOBILE_NAV_RIGHT, isActive, navItem, type NavItem } from './navItems';
 
 export function MobileNav() {
   const pathname = usePathname();
   const { openCreate } = useExpenseDialog();
-  const [dashboard, expenses] = NAV_ITEMS;
-
-  const renderLink = ({ href, label, icon: Icon }: (typeof NAV_ITEMS)[number]) => {
+  const renderLink = (item: NavItem) => {
+    const { href, label, icon: Icon } = item;
+    const short = 'shortLabel' in item ? item.shortLabel : label;
     const active = isActive(pathname, href);
     return (
       <Link
+        key={href}
         href={href}
+        aria-label={short !== label ? label : undefined}
         aria-current={active ? 'page' : undefined}
         className={`flex flex-1 flex-col items-center gap-1 py-2 text-[11px] font-medium transition ${
           active ? 'text-indigo-600' : 'text-slate-500'
         }`}
       >
         <Icon size={22} strokeWidth={active ? 2.1 : 1.75} />
-        {label}
+        {short}
       </Link>
     );
   };
@@ -32,8 +34,8 @@ export function MobileNav() {
       aria-label="Main"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden"
     >
-      <div className="mx-auto flex max-w-sm items-center px-4">
-        {renderLink(dashboard)}
+      <div className="mx-auto flex max-w-md items-center px-2">
+        {MOBILE_NAV_LEFT.map((href) => renderLink(navItem(href)))}
         <div className="flex flex-1 justify-center">
           <button
             type="button"
@@ -44,7 +46,7 @@ export function MobileNav() {
             <PlusIcon size={26} strokeWidth={2.25} />
           </button>
         </div>
-        {renderLink(expenses)}
+        {MOBILE_NAV_RIGHT.map((href) => renderLink(navItem(href)))}
       </div>
     </nav>
   );
