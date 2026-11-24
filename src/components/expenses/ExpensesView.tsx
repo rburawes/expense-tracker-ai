@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useExpenseDialog } from '@/components/providers/ExpenseDialogProvider';
 import { useExpenses } from '@/components/providers/ExpenseProvider';
 import { useToast } from '@/components/providers/ToastProvider';
@@ -41,7 +41,15 @@ export function ExpensesView() {
   const shown = filtered.slice(0, visible);
   const filtering = hasActiveFilters(filters);
 
-  useEffect(() => setVisible(PAGE_SIZE), [filters, sort]);
+  // Changing filters or sort starts the list from the first page again.
+  function updateFilters(next: ExpenseFilters) {
+    setFilters(next);
+    setVisible(PAGE_SIZE);
+  }
+  function updateSort(next: SortKey) {
+    setSort(next);
+    setVisible(PAGE_SIZE);
+  }
 
   function handleDelete(expense: Expense) {
     try {
@@ -119,7 +127,7 @@ export function ExpensesView() {
         </div>
       ) : (
         <>
-          <FilterBar filters={filters} onChange={setFilters} sort={sort} onSortChange={setSort} />
+          <FilterBar filters={filters} onChange={updateFilters} sort={sort} onSortChange={updateSort} />
 
           <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2 px-1 text-sm" aria-live="polite">
             <p className="text-slate-500">
@@ -151,7 +159,7 @@ export function ExpensesView() {
                 title="No matching expenses"
                 description="Try a different search term, category or date range."
               >
-                <button type="button" className="btn btn-secondary" onClick={() => setFilters(DEFAULT_FILTERS)}>
+                <button type="button" className="btn btn-secondary" onClick={() => updateFilters(DEFAULT_FILTERS)}>
                   Clear filters
                 </button>
               </EmptyState>

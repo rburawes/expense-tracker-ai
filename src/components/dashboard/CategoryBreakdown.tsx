@@ -27,12 +27,11 @@ export function CategoryBreakdown({ expenses, currency }: { expenses: Expense[];
   const focus = totals.find((t) => t.category === hovered);
 
   const gap = totals.length > 1 ? 3 : 0;
-  let offset = 0;
-  const segments = totals.map((t) => {
+  const segments = totals.map((t, i) => {
     const length = Math.max(t.share * CIRC - gap, 0.5);
-    const seg = { ...t, length, offset };
-    offset += t.share * CIRC;
-    return seg;
+    // Each segment starts where the previous ones end.
+    const offset = totals.slice(0, i).reduce((acc, prev) => acc + prev.share * CIRC, 0);
+    return { ...t, length, offset };
   });
 
   return (

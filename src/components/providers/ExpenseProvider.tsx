@@ -58,6 +58,9 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // localStorage only exists in the browser, so saved data is loaded after mount
+    // to keep the first client render identical to the server render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     readFromStorage();
     setCurrencyState(loadSettings()?.currency ?? detectDefaultCurrency());
     setIsLoaded(true);
