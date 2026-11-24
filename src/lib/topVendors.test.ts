@@ -2,8 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   UNKNOWN_VENDOR,
   cleanDescription,
-  filterByVendorRange,
-  getVendorRangeBounds,
   rankVendors,
   topVendors,
   vendorKey,
@@ -137,42 +135,8 @@ describe('rankVendors ranking and metrics', () => {
   });
 });
 
-describe('time ranges', () => {
-  it('returns null bounds for all time', () => {
-    expect(getVendorRangeBounds('all', REF)).toBeNull();
-  });
-
-  it('computes inclusive bounds ending today', () => {
-    expect(getVendorRangeBounds('this-month', REF)).toEqual({ startDate: '2026-11-01', endDate: '2026-11-24' });
-    expect(getVendorRangeBounds('last-3-months', REF)).toEqual({ startDate: '2026-09-01', endDate: '2026-11-24' });
-    expect(getVendorRangeBounds('this-year', REF)).toEqual({ startDate: '2026-01-01', endDate: '2026-11-24' });
-  });
-
-  it('handles last 3 months across a year boundary', () => {
-    expect(getVendorRangeBounds('last-3-months', new Date(2026, 0, 15))).toEqual({
-      startDate: '2025-11-01',
-      endDate: '2026-01-15',
-    });
-  });
-
-  it('includes boundary dates and excludes dates just outside', () => {
-    const items = [
-      exp('Before', 1, '2026-10-31'),
-      exp('Start', 1, '2026-11-01'),
-      exp('End', 1, '2026-11-24'),
-      exp('After', 1, '2026-11-25'),
-    ];
-    expect(filterByVendorRange(items, 'this-month', REF).map((e) => e.description)).toEqual(['Start', 'End']);
-    expect(filterByVendorRange(items, 'all', REF)).toHaveLength(4);
-
-    const yearItems = [exp('Old', 1, '2025-12-31'), exp('New', 1, '2026-01-01')];
-    expect(filterByVendorRange(yearItems, 'this-year', REF).map((e) => e.description)).toEqual(['New']);
-
-    const q = [exp('Out', 1, '2026-08-31'), exp('In', 1, '2026-09-01')];
-    expect(filterByVendorRange(q, 'last-3-months', REF).map((e) => e.description)).toEqual(['In']);
-  });
-
-  it('filters before ranking so shares reflect the selected range', () => {
+describe('topVendors', () => {
+  it('filters by the shared time range before ranking so shares reflect the range', () => {
     const items = [exp('Old big', 1000, '2025-06-01'), exp('A', 30, '2026-11-02'), exp('B', 10, '2026-11-03')];
     const result = topVendors(items, 'this-month', REF);
     expect(result.map((v) => v.name)).toEqual(['A', 'B']);

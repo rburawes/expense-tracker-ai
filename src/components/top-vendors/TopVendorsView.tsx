@@ -14,12 +14,10 @@ import { CATEGORY_META } from '@/lib/categories';
 import { formatCurrency, formatDate, formatPercent } from '@/lib/format';
 import {
   DEFAULT_VENDOR_LIMIT,
-  VENDOR_RANGES,
-  filterByVendorRange,
   rankVendors,
-  type VendorRange,
   type VendorTotal,
 } from '@/lib/topVendors';
+import { TIME_RANGES, filterByRange, timeRangeLabel, type TimeRange } from '@/lib/timeRanges';
 
 function ShareBar({ vendor }: { vendor: VendorTotal }) {
   return (
@@ -35,18 +33,18 @@ function ShareBar({ vendor }: { vendor: VendorTotal }) {
 export function TopVendorsView() {
   const { expenses, isLoaded, currency } = useExpenses();
   const { openCreate } = useExpenseDialog();
-  const [range, setRange] = useState<VendorRange>('all');
+  const [range, setRange] = useState<TimeRange>('all');
   const [showAll, setShowAll] = useState(false);
 
-  const scoped = useMemo(() => filterByVendorRange(expenses, range), [expenses, range]);
+  const scoped = useMemo(() => filterByRange(expenses, range), [expenses, range]);
   const vendors = useMemo(() => rankVendors(scoped), [scoped]);
   const grand = useMemo(() => sumAmounts(scoped), [scoped]);
   const shown = showAll ? vendors : vendors.slice(0, DEFAULT_VENDOR_LIMIT);
-  const rangeLabel = VENDOR_RANGES.find((r) => r.value === range)?.label ?? '';
+  const rangeLabel = timeRangeLabel(range);
 
   const rangePicker = (
     <div className="flex rounded-lg bg-slate-100 p-0.5 text-xs font-medium" role="tablist" aria-label="Time range">
-      {VENDOR_RANGES.map((r) => (
+      {TIME_RANGES.map((r) => (
         <button
           key={r.value}
           type="button"

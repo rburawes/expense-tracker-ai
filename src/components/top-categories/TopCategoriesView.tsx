@@ -13,7 +13,8 @@ import { StorageErrorBanner } from '@/components/ui/StorageErrorBanner';
 import { sumAmounts } from '@/lib/analytics';
 import { CATEGORY_META } from '@/lib/categories';
 import { formatCurrency, formatPercent } from '@/lib/format';
-import { TIME_RANGES, filterByRange, rankCategories, type TimeRange } from '@/lib/topCategories';
+import { rankCategories } from '@/lib/topCategories';
+import { TIME_RANGES, filterByRange, timeRangeLabel, type TimeRange } from '@/lib/timeRanges';
 
 export function TopCategoriesView() {
   const { expenses, isLoaded, currency } = useExpenses();
@@ -23,7 +24,7 @@ export function TopCategoriesView() {
   const scoped = useMemo(() => filterByRange(expenses, range), [expenses, range]);
   const ranked = useMemo(() => rankCategories(scoped), [scoped]);
   const grand = useMemo(() => sumAmounts(scoped), [scoped]);
-  const rangeLabel = TIME_RANGES.find((r) => r.value === range)?.label ?? 'All time';
+  const rangeLabel = timeRangeLabel(range);
 
   const selector = (
     <div className="flex flex-wrap rounded-lg bg-slate-100 p-0.5 text-xs font-medium" role="tablist" aria-label="Time range">

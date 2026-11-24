@@ -1,4 +1,4 @@
-import { toISODate } from './format';
+import { filterByRange, type TimeRange } from './timeRanges';
 import { CATEGORIES, type Category, type Expense } from './types';
 
 /*
@@ -28,49 +28,6 @@ export function cleanDescription(description: string): string {
 /** Case-insensitive grouping key for a description ('' means Unknown). */
 export function vendorKey(description: string): string {
   return cleanDescription(description).toLowerCase();
-}
-
-/* ------------------------------------------------------------------ */
-/* Time ranges                                                          */
-/* ------------------------------------------------------------------ */
-
-export type VendorRange = 'all' | 'this-month' | 'last-3-months' | 'this-year';
-
-export const VENDOR_RANGES: { value: VendorRange; label: string }[] = [
-  { value: 'all', label: 'All time' },
-  { value: 'this-month', label: 'This month' },
-  { value: 'last-3-months', label: 'Last 3 months' },
-  { value: 'this-year', label: 'This year' },
-];
-
-/**
- * Inclusive YYYY-MM-DD bounds for a range, or null for "all time".
- * Ranges end on `ref` (today), matching the quick ranges on the Expenses page.
- * "Last 3 months" is the current calendar month plus the two before it.
- */
-export function getVendorRangeBounds(
-  range: VendorRange,
-  ref = new Date(),
-): { startDate: string; endDate: string } | null {
-  const y = ref.getFullYear();
-  const m = ref.getMonth();
-  const endDate = toISODate(ref);
-  switch (range) {
-    case 'all':
-      return null;
-    case 'this-month':
-      return { startDate: toISODate(new Date(y, m, 1)), endDate };
-    case 'last-3-months':
-      return { startDate: toISODate(new Date(y, m - 2, 1)), endDate };
-    case 'this-year':
-      return { startDate: toISODate(new Date(y, 0, 1)), endDate };
-  }
-}
-
-export function filterByVendorRange(expenses: Expense[], range: VendorRange, ref = new Date()): Expense[] {
-  const bounds = getVendorRangeBounds(range, ref);
-  if (!bounds) return expenses;
-  return expenses.filter((e) => e.date >= bounds.startDate && e.date <= bounds.endDate);
 }
 
 /* ------------------------------------------------------------------ */
@@ -171,6 +128,6 @@ export function rankVendors(expenses: Expense[]): VendorTotal[] {
 }
 
 /** Convenience: filter by range, then rank. */
-export function topVendors(expenses: Expense[], range: VendorRange, ref = new Date()): VendorTotal[] {
-  return rankVendors(filterByVendorRange(expenses, range, ref));
+export function topVendors(expenses: Expense[], range: TimeRange, ref = new Date()): VendorTotal[] {
+  return rankVendors(filterByRange(expenses, range, ref));
 }
