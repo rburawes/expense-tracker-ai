@@ -82,6 +82,14 @@ export const ReceiptIcon = createIcon(
   'M6 3h12v18l-3-2-3 2-3-2-3 2V3Zm3 5h6m-6 4h6m-6 4h3',
   'ReceiptIcon',
 );
+export const StoreIcon = createIcon(
+  [
+    'M4 9.5 5.5 4h13L20 9.5',
+    'M4 9.5a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0',
+    'M5 12v8h14v-8M10 20v-5h4v5',
+  ],
+  'StoreIcon',
+);
 export const SparkleIcon = createIcon(
   'M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.5 2.5M15.2 15.2l2.5 2.5M6.3 17.7l2.5-2.5M15.2 8.8l2.5-2.5',
   'SparkleIcon',
