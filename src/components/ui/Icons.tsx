@@ -105,3 +105,8 @@ export const TrophyIcon = createIcon(
   'M8 4h8v5a4 4 0 0 1-8 0V4Zm0 2H5v1.5A3.5 3.5 0 0 0 8.5 11M16 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M12 13v4m-4 3h8m-6-3h4v3h-4v-3Z',
   'TrophyIcon',
 );
+export const FlameIcon = createIcon(
+  'M12 21a7 7 0 0 0 7-7c0-4-3-6.5-4-10-2 1.5-3.5 4-3.5 6.5-1-1-1.5-2-1.5-3.5C7 9 5 11.5 5 14a7 7 0 0 0 7 7Zm0 0a2.5 2.5 0 0 0 2.5-2.5c0-1.8-1.5-2.8-2.5-4.5-1 1.7-2.5 2.7-2.5 4.5A2.5 2.5 0 0 0 12 21Z',
+  'FlameIcon',
+);
+export const PieIcon = createIcon(['M12 3v9h9', 'M21 12a9 9 0 1 1-9-9'], 'PieIcon');

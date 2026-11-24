@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MOBILE_NAV_LEFT, MOBILE_NAV_RIGHT, NAV_ITEMS, isActive, navItem } from './navItems';
+import { MOBILE_HEADER_LINKS, MOBILE_NAV_LEFT, MOBILE_NAV_RIGHT, NAV_ITEMS, isActive, navItem } from './navItems';
 
 describe('navItems', () => {
   it('every mobile bottom-bar href resolves to a nav item', () => {
@@ -8,9 +8,9 @@ describe('navItems', () => {
     }
   });
 
-  it('shows every page except Settings (which is in the mobile header) in the bottom bar', () => {
+  it('shows every page on mobile, in either the bottom bar or the header', () => {
     const mobile = new Set<string>([...MOBILE_NAV_LEFT, ...MOBILE_NAV_RIGHT]);
-    expect(NAV_ITEMS.filter((i) => !mobile.has(i.href)).map((i) => i.href)).toEqual(['/settings']);
+    expect(NAV_ITEMS.filter((i) => !mobile.has(i.href)).map((i) => i.href)).toEqual([...MOBILE_HEADER_LINKS]);
   });
 
   it('throws for an unknown href', () => {

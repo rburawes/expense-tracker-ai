@@ -28,6 +28,8 @@ interface ExpenseContextValue {
   loadError: string | null;
   currency: string;
   setCurrency: (currency: string) => void;
+  monthlyBudget: number | null;
+  setMonthlyBudget: (budget: number | null) => void;
   /** All mutators throw a StorageError if the change could not be persisted. */
   addExpense: (input: ExpenseInput) => Expense;
   updateExpense: (id: string, input: ExpenseInput) => Expense;
@@ -44,6 +46,7 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [currency, setCurrencyState] = useState('USD');
+  const [monthlyBudget, setMonthlyBudgetState] = useState<number | null>(null);
   const expensesRef = useRef<Expense[]>([]);
 
   const readFromStorage = useCallback(() => {
@@ -62,7 +65,9 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
     // to keep the first client render identical to the server render.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     readFromStorage();
-    setCurrencyState(loadSettings()?.currency ?? detectDefaultCurrency());
+    const settings = loadSettings();
+    setCurrencyState(settings.currency ?? detectDefaultCurrency());
+    setMonthlyBudgetState(settings.monthlyBudget ?? null);
     setIsLoaded(true);
 
     // Keep multiple open tabs in sync.
@@ -70,7 +75,8 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
       if (event.key === STORAGE_KEYS.expenses) readFromStorage();
       if (event.key === STORAGE_KEYS.settings) {
         const s = loadSettings();
-        if (s) setCurrencyState(s.currency);
+        if (s.currency) setCurrencyState(s.currency);
+        setMonthlyBudgetState(s.monthlyBudget ?? null);
       }
     }
     window.addEventListener('storage', onStorage);
@@ -140,6 +146,11 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
     saveSettings({ currency: code });
   }, []);
 
+  const setMonthlyBudget = useCallback((budget: number | null) => {
+    setMonthlyBudgetState(budget);
+    saveSettings({ monthlyBudget: budget });
+  }, []);
+
   const value = useMemo<ExpenseContextValue>(
     () => ({
       expenses,
@@ -147,6 +158,8 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
       loadError,
       currency,
       setCurrency,
+      monthlyBudget,
+      setMonthlyBudget,
       addExpense,
       updateExpense,
       deleteExpense,
@@ -160,6 +173,8 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
       loadError,
       currency,
       setCurrency,
+      monthlyBudget,
+      setMonthlyBudget,
       addExpense,
       updateExpense,
       deleteExpense,

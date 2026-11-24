@@ -1,8 +1,9 @@
-import { DashboardIcon, ListIcon, SettingsIcon, StoreIcon, TrophyIcon } from '@/components/ui/Icons';
+import { DashboardIcon, ListIcon, PieIcon, SettingsIcon, StoreIcon, TrophyIcon } from '@/components/ui/Icons';
 
 export const NAV_ITEMS = [
   { href: '/', label: 'Dashboard', icon: DashboardIcon },
   { href: '/expenses', label: 'Expenses', icon: ListIcon },
+  { href: '/insights', label: 'Insights', icon: PieIcon },
   { href: '/top-categories', label: 'Top Categories', shortLabel: 'Categories', icon: TrophyIcon },
   { href: '/top-vendors', label: 'Top Vendors', shortLabel: 'Vendors', icon: StoreIcon },
   { href: '/settings', label: 'Settings', icon: SettingsIcon },
@@ -10,9 +11,12 @@ export const NAV_ITEMS = [
 
 export type NavItem = (typeof NAV_ITEMS)[number];
 
-/** Bottom-bar links on mobile, either side of the add button (Settings lives in the mobile header). */
+/** Bottom-bar links on mobile, either side of the add button (Insights and Settings live in the mobile header). */
 export const MOBILE_NAV_LEFT = ['/', '/expenses'] as const;
 export const MOBILE_NAV_RIGHT = ['/top-categories', '/top-vendors'] as const;
+
+/** Pages reached from icon buttons in the mobile header rather than the bottom bar. */
+export const MOBILE_HEADER_LINKS = ['/insights', '/settings'] as const;
 
 export function navItem(href: string): NavItem {
   const item = NAV_ITEMS.find((i) => i.href === href);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useExpenses } from '@/components/providers/ExpenseProvider';
 import { useToast } from '@/components/providers/ToastProvider';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -12,12 +12,43 @@ import { sumAmounts } from '@/lib/analytics';
 import { CURRENCIES } from '@/lib/currencies';
 import { downloadCsv, expensesToCsv } from '@/lib/csv';
 import { sortExpenses } from '@/lib/filters';
-import { formatCurrency, todayISO } from '@/lib/format';
+import { formatCurrency, getCurrencySymbol, todayISO } from '@/lib/format';
+import { isValidBudget } from '@/lib/insights';
 
 export function SettingsView() {
-  const { expenses, isLoaded, currency, setCurrency, addSampleData, clearAll, loadError } = useExpenses();
+  const { expenses, isLoaded, currency, setCurrency, monthlyBudget, setMonthlyBudget, addSampleData, clearAll, loadError } =
+    useExpenses();
   const { toast } = useToast();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [budgetDraft, setBudgetDraft] = useState('');
+  const [budgetError, setBudgetError] = useState<string | null>(null);
+
+  // Mirror the saved budget into the input once loaded (and when another tab changes it).
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setBudgetDraft(monthlyBudget === null ? '' : String(monthlyBudget));
+  }, [monthlyBudget]);
+
+  function saveBudget(event: FormEvent) {
+    event.preventDefault();
+    const trimmed = budgetDraft.trim();
+    if (trimmed === '') {
+      setBudgetError(null);
+      if (monthlyBudget !== null) {
+        setMonthlyBudget(null);
+        toast({ type: 'success', title: 'Monthly budget cleared' });
+      }
+      return;
+    }
+    const value = Number(trimmed);
+    if (!isValidBudget(value)) {
+      setBudgetError('Enter an amount above zero with at most two decimal places.');
+      return;
+    }
+    setBudgetError(null);
+    setMonthlyBudget(value);
+    toast({ type: 'success', title: 'Monthly budget saved', description: formatCurrency(value, currency) });
+  }
 
   function exportAll() {
     downloadCsv(expensesToCsv(sortExpenses(expenses, 'date-desc'), currency), `expenses-all-${todayISO()}.csv`);
@@ -81,6 +112,41 @@ export function SettingsView() {
               Changes the display symbol only — amounts are not converted.
             </p>
           </div>
+          <form className="mt-5" onSubmit={saveBudget} noValidate>
+            <label htmlFor="monthly-budget" className="label">
+              Monthly budget
+            </label>
+            {isLoaded ? (
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <span className="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-sm text-slate-400">
+                    {getCurrencySymbol(currency)}
+                  </span>
+                  <input
+                    id="monthly-budget"
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="0.01"
+                    placeholder="No budget"
+                    className="input pl-10"
+                    value={budgetDraft}
+                    onChange={(e) => setBudgetDraft(e.target.value)}
+                    aria-invalid={budgetError ? true : undefined}
+                    aria-describedby="monthly-budget-help"
+                  />
+                </div>
+                <button type="submit" className="btn btn-secondary">
+                  Save
+                </button>
+              </div>
+            ) : (
+              <Skeleton className="h-11 w-full" />
+            )}
+            <p id="monthly-budget-help" className={`mt-2 text-xs ${budgetError ? 'text-rose-600' : 'text-slate-500'}`}>
+              {budgetError ?? 'Used for your budget streak on Insights. Leave empty to turn it off.'}
+            </p>
+          </form>
           <div className="mt-6 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
             <p className="font-medium text-slate-800">Keyboard shortcut</p>
             <p className="mt-1">

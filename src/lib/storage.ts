@@ -1,5 +1,6 @@
 import { isValidISODate } from './format';
 import { isSupportedCurrency } from './currencies';
+import { isValidBudget } from './insights';
 import { isCategory, type Expense } from './types';
 
 export const STORAGE_KEYS = {
@@ -9,6 +10,8 @@ export const STORAGE_KEYS = {
 
 export interface Settings {
   currency: string;
+  /** Monthly spending budget, or null when none is set. */
+  monthlyBudget: number | null;
 }
 
 export class StorageError extends Error {
@@ -85,22 +88,28 @@ export function saveExpenses(expenses: Expense[]): void {
   }
 }
 
-export function loadSettings(): Settings | null {
-  if (!storageAvailable()) return null;
+/** Reads settings, keeping only the fields that are valid. */
+export function loadSettings(): Partial<Settings> {
+  if (!storageAvailable()) return {};
   try {
     const raw = window.localStorage.getItem(STORAGE_KEYS.settings);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Partial<Settings>;
-    return isSupportedCurrency(parsed.currency) ? { currency: parsed.currency } : null;
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const result: Partial<Settings> = {};
+    if (isSupportedCurrency(parsed.currency)) result.currency = parsed.currency;
+    if (isValidBudget(parsed.monthlyBudget)) result.monthlyBudget = parsed.monthlyBudget;
+    else if (parsed.monthlyBudget === null) result.monthlyBudget = null;
+    return result;
   } catch {
-    return null;
+    return {};
   }
 }
 
-export function saveSettings(settings: Settings): void {
+/** Merges `patch` into the stored settings. Settings are non-critical, so failures are ignored. */
+export function saveSettings(patch: Partial<Settings>): void {
   if (!storageAvailable()) return;
   try {
-    window.localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
+    window.localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify({ ...loadSettings(), ...patch }));
   } catch {
     /* settings are non-critical */
   }

@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useExpenseDialog } from '@/components/providers/ExpenseDialogProvider';
-import { PlusIcon, SettingsIcon, WalletIcon } from '@/components/ui/Icons';
-import { NAV_ITEMS, isActive } from './navItems';
+import { PlusIcon, WalletIcon } from '@/components/ui/Icons';
+import { MOBILE_HEADER_LINKS, NAV_ITEMS, isActive, navItem } from './navItems';
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -21,19 +21,23 @@ export function AppHeader() {
         </Link>
 
         <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          {NAV_ITEMS.map((item) => {
+            const { href, label, icon: Icon } = item;
+            const short = 'shortLabel' in item ? item.shortLabel : label;
             const active = isActive(pathname, href);
             return (
               <Link
                 key={href}
                 href={href}
                 aria-current={active ? 'page' : undefined}
-                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                aria-label={short !== label ? label : undefined}
+                className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition ${
                   active ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
                 <Icon size={18} />
-                {label}
+                <span className="xl:hidden">{short}</span>
+                <span className="hidden xl:inline">{label}</span>
               </Link>
             );
           })}
@@ -45,14 +49,23 @@ export function AppHeader() {
           <kbd className="ml-1 rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-medium">N</kbd>
         </button>
 
-        <Link
-          href="/settings"
-          aria-label="Settings"
-          aria-current={isActive(pathname, '/settings') ? 'page' : undefined}
-          className={`btn-icon md:hidden ${isActive(pathname, '/settings') ? 'bg-indigo-50 text-indigo-600' : ''}`}
-        >
-          <SettingsIcon size={20} />
-        </Link>
+        <div className="flex items-center gap-1 md:hidden">
+          {MOBILE_HEADER_LINKS.map((href) => {
+            const { label, icon: Icon } = navItem(href);
+            const active = isActive(pathname, href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                aria-current={active ? 'page' : undefined}
+                className={`btn-icon ${active ? 'bg-indigo-50 text-indigo-600' : ''}`}
+              >
+                <Icon size={20} />
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </header>
   );
