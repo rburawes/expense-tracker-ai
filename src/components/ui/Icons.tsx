@@ -93,3 +93,7 @@ export const DatabaseIcon = createIcon(
   ],
   'DatabaseIcon',
 );
+export const TrophyIcon = createIcon(
+  'M8 4h8v5a4 4 0 0 1-8 0V4Zm0 2H5v1.5A3.5 3.5 0 0 0 8.5 11M16 6h3v1.5a3.5 3.5 0 0 1-3.5 3.5M12 13v4m-4 3h8m-6-3h4v3h-4v-3Z',
+  'TrophyIcon',
+);
